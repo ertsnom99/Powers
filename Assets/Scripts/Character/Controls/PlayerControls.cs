@@ -13,6 +13,7 @@ public class PlayerControls : MonoBehaviour
 
     public bool ControlsEnabled { get; private set; }
 
+    protected FPSCameraMovement m_cameraControl;
     protected RBCharacterMovement m_movementScript;
 
     protected virtual void Awake()
@@ -21,7 +22,13 @@ public class PlayerControls : MonoBehaviour
 
         ControlsEnabled = true;
 
+        m_cameraControl = GetComponentInChildren<FPSCameraMovement>();
         m_movementScript = GetComponent<RBCharacterMovement>();
+
+        if (!m_cameraControl)
+        {
+            Debug.LogError("No FPSCameraMovement found on childrens");
+        }
     }
 
     protected virtual void Update()
@@ -37,12 +44,12 @@ public class PlayerControls : MonoBehaviour
                 // Movement and camera update
                 if (!OnPreventMovementControlCheck())
                 {
-                    // TODO: Update camera
+                    UpdateCamera(inputs, inputs.LockOn);
                     UpdateMovement(inputs, inputs.LockOn);
                 }
                 else
                 {
-                    // TODO: Update camera
+                    UpdateCamera(noControlInputs, noControlInputs.LockOn);
                     UpdateMovement(noControlInputs, noControlInputs.LockOn);
                 }
                 
@@ -50,7 +57,7 @@ public class PlayerControls : MonoBehaviour
             }
             else
             {
-                // TODO: Update camera with noControlInputs.LockOn
+                UpdateCamera(noControlInputs, noControlInputs.LockOn);
                 UpdateMovement(noControlInputs, noControlInputs.LockOn);
                 
                 OnUpdate(noControlInputs);
@@ -62,7 +69,6 @@ public class PlayerControls : MonoBehaviour
     {
         Inputs inputs = new Inputs();
         
-        // TODO: Use keyboard only in debug mode
 	    if (m_useKeyboard)
 	    {
             // Inputs from the keyboard
@@ -101,12 +107,23 @@ public class PlayerControls : MonoBehaviour
 	protected virtual Inputs OnFetchInputs(Inputs inputs)
 	{
 		return inputs;
-	}
+    }
+
+    protected void UpdateCamera(Inputs inputs, bool lockOn)
+    {
+        Transform[] lockableTargets = null;
+
+        if (lockOn)
+        {
+            // TODO: Get all targets that can be locked on
+        }
+
+        m_cameraControl.RotateCamera(inputs, lockableTargets);
+    }
 
     protected void UpdateMovement(Inputs inputs, bool lockOn)
     {
-        // TODO: check for if camera found something to lock on to
-        m_movementScript.UpdateMovement(inputs, null);
+        m_movementScript.UpdateMovement(inputs, lockOn ? m_cameraControl.TargetLockedOn : null);
     }
 
     private bool ControlsCharacter()

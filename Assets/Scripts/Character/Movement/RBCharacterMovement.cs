@@ -304,26 +304,24 @@ public class RBCharacterMovement : MonoBehaviour
         
         m_rigidbody.AddForce(m_globalMovement - currentVelocity, ForceMode.VelocityChange);
         
-        // TEMP
-        // Make gravity stronger
-        //m_rigidbody.AddForce(Physics.gravity * m_rigidbody.mass * Time.fixedDeltaTime);
-
         if (m_lockOnTarget)
         {
             // The rotation is done over time
             Vector3 characterToTarget = m_lockOnTarget.position - transform.position;
             characterToTarget.y = 0;
 
-            Quaternion rotationToTarget = Quaternion.FromToRotation(transform.forward, characterToTarget);
+            float rotationDirection = Mathf.Sign(Vector3.Cross(transform.forward, characterToTarget.normalized).y);
+            float rotation = Vector3.Angle(transform.forward, Vector3.Slerp(transform.forward, characterToTarget.normalized, m_lockOnRotationSpeed * m_globalModifier * Time.fixedDeltaTime));
 
-            m_rigidbody.MoveRotation(Quaternion.Slerp(m_rigidbody.rotation, m_rigidbody.rotation * rotationToTarget, m_lockOnRotationSpeed * m_globalModifier * Time.fixedDeltaTime));
+            m_rigidbody.AddTorque(rotationDirection * transform.up * rotation - m_rigidbody.angularVelocity, ForceMode.VelocityChange);
         }
         else
         {
             // The rotation is instantaneous
             float rotation = m_lastRotationInput * m_rotationSpeed * m_globalModifier * Time.fixedDeltaTime;
-            
-            m_rigidbody.MoveRotation(m_rigidbody.rotation * Quaternion.AngleAxis(rotation, Vector3.up));
+
+            //m_rigidbody.MoveRotation(m_rigidbody.rotation * Quaternion.AngleAxis(rotation, Vector3.up));
+            m_rigidbody.AddTorque(rotation * transform.up - m_rigidbody.angularVelocity, ForceMode.VelocityChange);
         }
     }
 
