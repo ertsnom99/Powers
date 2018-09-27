@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b58357dcafe31224f97f54c29bbca510
+guid: 6b1b523e1eafb5845ab3397933545afc
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -133,8 +133,8 @@ ModelImporter:
     400124: Character1_Spine
     400126: Character1_Spine1
     400128: Character1_Spine2
-    7400000: LeftOldingSphereIdle
-    7400002: RightOldingSphereIdle
+    7400000: LeftHoldingSphereIdle
+    7400002: RightHoldingSphereIdle
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -156,7 +156,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -165,7 +165,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: LeftOldingSphereIdle
+      name: LeftHoldingSphereIdle
       takeName: Take 001
       firstFrame: 1
       lastFrame: 90
@@ -177,12 +177,12 @@ ModelImporter:
       hasAdditiveReferencePose: 0
       loopTime: 1
       loopBlend: 1
-      loopBlendOrientation: 1
-      loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
-      keepOriginalOrientation: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 1
+      keepOriginalPositionXZ: 0
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
@@ -193,7 +193,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: RightOldingSphereIdle
+      name: RightHoldingSphereIdle
       takeName: Take 001
       firstFrame: 1
       lastFrame: 90
@@ -205,12 +205,12 @@ ModelImporter:
       hasAdditiveReferencePose: 0
       loopTime: 1
       loopBlend: 1
-      loopBlendOrientation: 1
-      loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
-      keepOriginalOrientation: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 1
+      keepOriginalPositionXZ: 0
       heightFromFeet: 0
       mirror: 1
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
