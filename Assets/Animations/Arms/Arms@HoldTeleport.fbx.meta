@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6b1b523e1eafb5845ab3397933545afc
+guid: 8f904de9204708d4abeda26ca49dd56b
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
@@ -133,8 +133,7 @@ ModelImporter:
     400124: Character1_Spine
     400126: Character1_Spine1
     400128: Character1_Spine2
-    7400000: LeftHoldingSphereIdle
-    7400002: RightHoldingSphereIdle
+    7400000: HoldTeleport
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -165,7 +164,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: LeftHoldingSphereIdle
+      name: HoldTeleport
       takeName: Take 001
       firstFrame: 1
       lastFrame: 90
@@ -185,34 +184,6 @@ ModelImporter:
       keepOriginalPositionXZ: 0
       heightFromFeet: 0
       mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: RightHoldingSphereIdle
-      takeName: Take 001
-      firstFrame: 1
-      lastFrame: 90
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 1
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 1
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []

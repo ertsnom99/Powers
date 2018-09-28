@@ -9,6 +9,9 @@
 
     public bool LockOn;
 
+    public bool PreviousPower;
+    public bool NextPower;
+
     /*public bool interact;
     public bool interactHeldDown;
 

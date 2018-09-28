@@ -13,10 +13,11 @@ public class PlayerControls : MonoBehaviour
 
     public bool ControlsEnabled { get; private set; }
 
-    protected FPSCameraMovement m_cameraControl;
-    protected RBCharacterMovement m_movementScript;
-
-    protected virtual void Awake()
+    private FPSCameraMovement m_cameraControl;
+    private RBCharacterMovement m_movementScript;
+    private PowerManager m_powerManager;
+    
+    private void Awake()
     {
         noControlInputs = new Inputs();
 
@@ -24,14 +25,20 @@ public class PlayerControls : MonoBehaviour
 
         m_cameraControl = GetComponentInChildren<FPSCameraMovement>();
         m_movementScript = GetComponent<RBCharacterMovement>();
+        m_powerManager = GetComponentInChildren<PowerManager>();
 
         if (!m_cameraControl)
         {
             Debug.LogError("No FPSCameraMovement found on childrens");
         }
+
+        if (!m_powerManager)
+        {
+            Debug.LogError("No PowerManager found on childrens");
+        }
     }
 
-    protected virtual void Update()
+    private void Update()
     {
         // Only update when time isn't stop
         if (Time.deltaTime > 0.0f)
@@ -46,26 +53,25 @@ public class PlayerControls : MonoBehaviour
                 {
                     UpdateCamera(inputs, inputs.LockOn);
                     UpdateMovement(inputs, inputs.LockOn);
+                    UpdatePower(inputs);
                 }
                 else
                 {
                     UpdateCamera(noControlInputs, noControlInputs.LockOn);
                     UpdateMovement(noControlInputs, noControlInputs.LockOn);
+                    UpdatePower(noControlInputs);
                 }
-                
-                OnUpdate(inputs);
             }
             else
             {
                 UpdateCamera(noControlInputs, noControlInputs.LockOn);
                 UpdateMovement(noControlInputs, noControlInputs.LockOn);
-                
-                OnUpdate(noControlInputs);
+                UpdatePower(noControlInputs);
             }
         }
     }
 
-    protected virtual Inputs FetchInputs()
+    private Inputs FetchInputs()
     {
         Inputs inputs = new Inputs();
         
@@ -80,6 +86,9 @@ public class PlayerControls : MonoBehaviour
             inputs.yAxis = Input.GetAxis("Mouse Y");
 
             inputs.LockOn = Input.GetButton("Lock");
+
+            inputs.PreviousPower = Input.GetKeyDown("q");
+            inputs.NextPower = Input.GetKeyDown("e");
         }
 	    else
 	    {
@@ -92,9 +101,10 @@ public class PlayerControls : MonoBehaviour
             inputs.yAxis = Input.GetAxis("Right Stick Y");
 
             inputs.LockOn = Input.GetButton("Controller Lock");
-        }
 
-		inputs = OnFetchInputs(inputs);
+            inputs.PreviousPower = Input.GetButtonDown("Left Bumper");
+            inputs.NextPower = Input.GetButtonDown("Right Bumper");
+        }
 
         return inputs;
 	}
@@ -104,12 +114,17 @@ public class PlayerControls : MonoBehaviour
         m_useKeyboard = useKeyboard;
     }
 
-	protected virtual Inputs OnFetchInputs(Inputs inputs)
-	{
-		return inputs;
+    private bool ControlsCharacter()
+    {
+        return ControlsEnabled;
     }
 
-    protected void UpdateCamera(Inputs inputs, bool lockOn)
+    private bool OnPreventMovementControlCheck()
+    {
+        return false;
+    }
+
+    private void UpdateCamera(Inputs inputs, bool lockOn)
     {
         Transform[] lockableTargets = null;
 
@@ -121,22 +136,26 @@ public class PlayerControls : MonoBehaviour
         m_cameraControl.RotateCamera(inputs, lockableTargets);
     }
 
-    protected void UpdateMovement(Inputs inputs, bool lockOn)
+    private void UpdateMovement(Inputs inputs, bool lockOn)
     {
         m_movementScript.UpdateMovement(inputs, lockOn ? m_cameraControl.TargetLockedOn : null);
     }
 
-    private bool ControlsCharacter()
+    private void UpdatePower(Inputs inputs)
     {
-        return ControlsEnabled;
+        // Only allow to switch if there's more than one power available
+        if (m_powerManager.NbrOfAvailablePowers > 1)
+        {
+            if (inputs.PreviousPower)
+            {
+                m_powerManager.SelectPreviousPower();
+            }
+            else if (inputs.NextPower)
+            {
+                m_powerManager.SelectNextPower();
+            }
+        }
     }
-
-    protected virtual bool OnPreventMovementControlCheck()
-    {
-        return false;
-    }
-
-    protected virtual void OnUpdate(Inputs inputs) { }
     
     public void EnableControl(bool enable)
     {
