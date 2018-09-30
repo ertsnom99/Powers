@@ -133,7 +133,7 @@ ModelImporter:
     400124: Character1_Spine
     400126: Character1_Spine1
     400128: Character1_Spine2
-    7400000: HoldTeleport
+    7400000: LeftHoldTeleport
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -164,7 +164,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: HoldTeleport
+      name: LeftHoldTeleport
       takeName: Take 001
       firstFrame: 1
       lastFrame: 90
