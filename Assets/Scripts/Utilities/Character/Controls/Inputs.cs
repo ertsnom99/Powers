@@ -12,6 +12,12 @@
     public bool PreviousPower;
     public bool NextPower;
 
+    public bool ChargingLeftPower;
+    public bool ChargingRightPower;
+
+    public bool UseLeftPower;
+    public bool UseRightPower;
+
     /*public bool interact;
     public bool interactHeldDown;
 

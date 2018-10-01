@@ -11,6 +11,9 @@ public class PlayerControls : MonoBehaviour
 
     private Inputs noControlInputs;
 
+    private bool m_wasLeftTriggerInputDown = false;
+    private bool m_wasRightTriggerInputDown = false;
+
     public bool ControlsEnabled { get; private set; }
 
     private FPSCameraMovement m_cameraControl;
@@ -87,8 +90,14 @@ public class PlayerControls : MonoBehaviour
 
             inputs.LockOn = Input.GetButton("Lock");
 
-            inputs.PreviousPower = Input.GetKeyDown("q");
-            inputs.NextPower = Input.GetKeyDown("e");
+            inputs.PreviousPower = Input.GetKeyDown("z");
+            inputs.NextPower = Input.GetKeyDown("c");
+
+            inputs.UseLeftPower = Input.GetKeyDown("q");
+            inputs.UseRightPower = Input.GetKeyDown("e");
+
+            inputs.ChargingLeftPower = Input.GetKey("q");
+            inputs.ChargingRightPower = Input.GetKey("e");
         }
 	    else
 	    {
@@ -104,6 +113,12 @@ public class PlayerControls : MonoBehaviour
 
             inputs.PreviousPower = Input.GetButtonDown("Left Bumper");
             inputs.NextPower = Input.GetButtonDown("Right Bumper");
+
+            inputs.UseLeftPower = !m_wasLeftTriggerInputDown && Input.GetAxis("Left Trigger") == 1.0f;
+            inputs.UseRightPower = !m_wasRightTriggerInputDown && Input.GetAxis("Right Trigger") == 1.0f;
+
+            inputs.ChargingLeftPower = m_wasLeftTriggerInputDown = Input.GetAxis("Left Trigger") == 1.0f;
+            inputs.ChargingRightPower = m_wasRightTriggerInputDown = Input.GetAxis("Right Trigger") == 1.0f;
         }
 
         return inputs;
