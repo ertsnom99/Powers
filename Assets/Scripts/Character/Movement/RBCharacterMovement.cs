@@ -87,26 +87,16 @@ public class RBCharacterMovement : MonoBehaviour
         m_rigidbody = GetComponent<Rigidbody>();
     }
 
-    public void UpdateMovement(Inputs inputs, Transform lockOnTarget = null)
+    // This method actually set the values that the FixedUpdate needes to move the character  
+    public void MoveCharacter(Inputs inputs, Transform lockOnTarget = null)
     {
         m_lockOnTarget = lockOnTarget;
 
         if (!m_lockOnTarget)
         {
-            RegisterRotationInput(inputs);
+            m_lastRotationInput = inputs.xAxis;
         }
 
-        MoveCharacter(inputs);
-    }
-
-    private void RegisterRotationInput(Inputs inputs)
-    {
-        m_lastRotationInput = inputs.xAxis;
-    }
-
-    // This method actually set the values that the FixedUpdate needes to move the character  
-    private void MoveCharacter(Inputs inputs)
-    {
         m_movementInputs = new Vector2(inputs.horizontal, inputs.vertical);
         if (m_movementInputs.magnitude > 1.0f) m_movementInputs.Normalize();
         

@@ -10,7 +10,7 @@ public class PowerManager : MonoBehaviour
     private Dictionary<int, bool> m_powerAvailability;
     public int NbrOfAvailablePowers { get; private set; }
 
-    private int m_selectedPower;
+    private int m_selectedPowerIndex;
 
     private delegate int IndexChangeDelegate();
     IndexChangeDelegate m_indexChangeDelegateMethod;
@@ -30,7 +30,7 @@ public class PowerManager : MonoBehaviour
 
         if (NbrOfAvailablePowers > 0)
         {
-            SelectPower(m_selectedPower);
+            SelectPower(m_selectedPowerIndex);
         }
     }
 
@@ -56,7 +56,7 @@ public class PowerManager : MonoBehaviour
 
                 if (!foundFirstAvailablePower)
                 {
-                    m_selectedPower = i;
+                    m_selectedPowerIndex = i;
                     foundFirstAvailablePower = true;
                 }
             }
@@ -77,10 +77,10 @@ public class PowerManager : MonoBehaviour
         {
             if (m_powerAvailability[powerIndex])
             {
-                int previousPower = m_selectedPower;
-                m_selectedPower = powerIndex;
+                int previousPower = m_selectedPowerIndex;
+                m_selectedPowerIndex = powerIndex;
 
-                ChangePowerAnimation(previousPower, m_selectedPower);
+                ChangePowerAnimation(previousPower, m_selectedPowerIndex);
             }
         }
         else
@@ -98,7 +98,7 @@ public class PowerManager : MonoBehaviour
 
     private int CalculateNextIndex()
     {
-        return (m_selectedPower + 1) % m_powers.Length;
+        return (m_selectedPowerIndex + 1) % m_powers.Length;
     }
 
     public void SelectPreviousPower()
@@ -110,22 +110,26 @@ public class PowerManager : MonoBehaviour
 
     private int CalculatePreviousIndex()
     {
-        return (m_powers.Length + m_selectedPower - 1) % m_powers.Length;
+        return (m_powers.Length + m_selectedPowerIndex - 1) % m_powers.Length;
     }
 
     private void ChangePower()
     {
-        int previousPower = m_selectedPower;
-
-        do
+        // Only allow to switch if there's more than one power available
+        if (NbrOfAvailablePowers > 1)
         {
-            m_selectedPower = m_indexChangeDelegateMethod();
-        }
-        while (!m_powerAvailability[m_selectedPower] && previousPower != m_selectedPower);
+            int previousPower = m_selectedPowerIndex;
 
-        if (m_selectedPower != previousPower)
-        {
-            ChangePowerAnimation(previousPower, m_selectedPower);
+            do
+            {
+                m_selectedPowerIndex = m_indexChangeDelegateMethod();
+            }
+            while (!m_powerAvailability[m_selectedPowerIndex] && previousPower != m_selectedPowerIndex);
+
+            if (m_selectedPowerIndex != previousPower)
+            {
+                ChangePowerAnimation(previousPower, m_selectedPowerIndex);
+            }
         }
     }
 
@@ -135,13 +139,31 @@ public class PowerManager : MonoBehaviour
         m_armsAnimator.SetBool(m_powers[currentPower].IsIdleParamHashId, true);
     }
 
-    public void ChargePower()
+    public bool IsSelectedPowerChargeable()
     {
+        return m_powers[m_selectedPowerIndex].IsChargeable;
+    }
 
+    public bool IsSelectedPowerCharging()
+    {
+        return m_powers[m_selectedPowerIndex].IsCharging;
+    }
+
+    public void StartChargingPower()
+    {
+        m_powers[m_selectedPowerIndex].StartCharging();
+        Debug.Log(Time.frameCount + " Charge");
+    }
+
+    public void StopChargingPower()
+    {
+        m_powers[m_selectedPowerIndex].StopCharging();
+        Debug.Log(Time.frameCount + " Stop");
     }
 
     public void UsePower()
     {
-
+        m_powers[m_selectedPowerIndex].Use();
+        Debug.Log(Time.frameCount + " Use");
     }
 }
