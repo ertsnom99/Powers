@@ -1,23 +1,32 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class PowerManager : MonoBehaviour
+public enum ArmSide
 {
+    Left,
+    Right
+}
+
+public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
+{
+    [Header("Animation")]
+    [SerializeField]
+    private Animator m_armsAnimator;
+    [SerializeField]
+    private ArmsEventsManager m_armsEventsManager;
+
     [Header("Powers")]
     [SerializeField]
     private Power[] m_powers;
 
     private Dictionary<int, bool> m_powerAvailability;
     public int NbrOfAvailablePowers { get; private set; }
-
+    
+    private int m_previousPowerIndex;
     private int m_selectedPowerIndex;
 
     private delegate int IndexChangeDelegate();
     IndexChangeDelegate m_indexChangeDelegateMethod;
-
-    [Header("Animation")]
-    [SerializeField]
-    private Animator m_armsAnimator;
 
     private void Awake()
     {
@@ -27,6 +36,8 @@ public class PowerManager : MonoBehaviour
     private void Start()
     {
         ResetAnimator();
+        ResetAllPowers();
+        SubscribeToEvents();
 
         if (NbrOfAvailablePowers > 0)
         {
@@ -71,16 +82,32 @@ public class PowerManager : MonoBehaviour
         }
     }
 
+    private void ResetAllPowers()
+    {
+        for (int i = 0; i< m_powers.Length; i++)
+        {
+            ShowPower(i, false);
+        }
+    }
+
+    private void SubscribeToEvents()
+    {
+        m_armsEventsManager.Subscribe(ArmsEventsManager.LEFT_ARM_HIDE_POWER_EVENT, this);
+        m_armsEventsManager.Subscribe(ArmsEventsManager.LEFT_ARM_SHOW_POWER_EVENT, this);
+        m_armsEventsManager.Subscribe(ArmsEventsManager.RIGHT_ARM_HIDE_POWER_EVENT, this);
+        m_armsEventsManager.Subscribe(ArmsEventsManager.RIGHT_ARM_SHOW_POWER_EVENT, this);
+    }
+
     public void SelectPower(int powerIndex)
     {
         if (-1 < powerIndex && powerIndex < m_powers.Length)
         {
             if (m_powerAvailability[powerIndex])
             {
-                int previousPower = m_selectedPowerIndex;
+                m_previousPowerIndex = m_selectedPowerIndex;
                 m_selectedPowerIndex = powerIndex;
 
-                ChangePowerAnimation(previousPower, m_selectedPowerIndex);
+                ChangePowerAnimation(m_previousPowerIndex, m_selectedPowerIndex);
             }
         }
         else
@@ -113,22 +140,23 @@ public class PowerManager : MonoBehaviour
         return (m_powers.Length + m_selectedPowerIndex - 1) % m_powers.Length;
     }
 
+    // Used to go to next or previous power based on m_indexChangeDelegateMethod
     private void ChangePower()
     {
-        // Only allow to switch if there's more than one power available
+        // Only allow to change if there's more than one power available
         if (NbrOfAvailablePowers > 1)
         {
-            int previousPower = m_selectedPowerIndex;
+            int lastIterationPower = m_previousPowerIndex = m_selectedPowerIndex;
 
             do
             {
                 m_selectedPowerIndex = m_indexChangeDelegateMethod();
             }
-            while (!m_powerAvailability[m_selectedPowerIndex] && previousPower != m_selectedPowerIndex);
+            while (!m_powerAvailability[m_selectedPowerIndex] && lastIterationPower != m_selectedPowerIndex);
 
-            if (m_selectedPowerIndex != previousPower)
+            if (m_selectedPowerIndex != lastIterationPower)
             {
-                ChangePowerAnimation(previousPower, m_selectedPowerIndex);
+                ChangePowerAnimation(lastIterationPower, m_selectedPowerIndex);
             }
         }
     }
@@ -137,6 +165,11 @@ public class PowerManager : MonoBehaviour
     {
         m_armsAnimator.SetBool(m_powers[previousPower].IsIdleParamHashId, false);
         m_armsAnimator.SetBool(m_powers[currentPower].IsIdleParamHashId, true);
+    }
+
+    private void ShowPower(int powerIndex, bool show)
+    {
+        m_powers[powerIndex].ShowPower(show);
     }
 
     public bool IsSelectedPowerChargeable()
@@ -165,5 +198,28 @@ public class PowerManager : MonoBehaviour
     {
         m_powers[m_selectedPowerIndex].Use();
         Debug.Log(Time.frameCount + " Use");
+    }
+
+    // Methods of the IAnimatorEventSubscriber interface
+    public void NotifyEvent(string eventName)
+    {
+        switch(eventName)
+        {
+            case ArmsEventsManager.LEFT_ARM_HIDE_POWER_EVENT:
+                ShowPower(m_previousPowerIndex, false);
+                break;
+            case ArmsEventsManager.LEFT_ARM_SHOW_POWER_EVENT:
+                ShowPower(m_selectedPowerIndex, true);
+                break;
+            case ArmsEventsManager.RIGHT_ARM_HIDE_POWER_EVENT:
+
+                break;
+            case ArmsEventsManager.RIGHT_ARM_SHOW_POWER_EVENT:
+
+                break;
+            default:
+                Debug.LogWarning("Unpredicted event: " + eventName);
+                break;
+        }
     }
 }

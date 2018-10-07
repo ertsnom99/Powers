@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_isIdleParamNameString: IsHoldingTeleport
+  m_teleportProjectile: {fileID: 1343770591}
 --- !u!4 &122303787 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400060, guid: 0c21493f4095a6d4f869a1ff87ffff12,
@@ -339,6 +340,22 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 9500000, guid: 0c21493f4095a6d4f869a1ff87ffff12,
     type: 3}
   m_PrefabInternal: {fileID: 249410099}
+--- !u!1 &290012154 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: 0c21493f4095a6d4f869a1ff87ffff12,
+    type: 3}
+  m_PrefabInternal: {fileID: 249410099}
+--- !u!114 &290012155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 290012154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 319790ce548afde4ca71bb2c7b6c5918, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &340192451
 GameObject:
   m_ObjectHideFlags: 0
@@ -468,7 +485,7 @@ GameObject:
   - component: {fileID: 343538367}
   - component: {fileID: 343538368}
   m_Layer: 0
-  m_Name: Teleport (1)
+  m_Name: Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -495,7 +512,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 343538366}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02d8f7979f65fce479d077d3f26a9d5f, type: 3}
+  m_Script: {fileID: 11500000, guid: f758f8aa6fe9a2b41baa8ac28502fd5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_isIdleParamNameString: Pose02
@@ -716,11 +733,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2b414e21f8f80b4c837882ca1292ab0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_armsAnimator: {fileID: 249410100}
+  m_armsEventsManager: {fileID: 290012155}
   m_powers:
   - {fileID: 105763480}
   - {fileID: 343538368}
   - {fileID: 1058809258}
-  m_armsAnimator: {fileID: 249410100}
 --- !u!1 &634088606
 GameObject:
   m_ObjectHideFlags: 0
@@ -902,7 +920,7 @@ GameObject:
   - component: {fileID: 1058809257}
   - component: {fileID: 1058809258}
   m_Layer: 0
-  m_Name: Teleport (2)
+  m_Name: Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -929,7 +947,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1058809256}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02d8f7979f65fce479d077d3f26a9d5f, type: 3}
+  m_Script: {fileID: 11500000, guid: f758f8aa6fe9a2b41baa8ac28502fd5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_isIdleParamNameString: Pose03

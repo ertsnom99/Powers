@@ -5,6 +5,7 @@ public abstract class Power : MonoBehaviour
     public bool IsChargeable { get; protected set; }
     public bool IsCharging { get; protected set; }
 
+    [Header("Animation")]
     [SerializeField]
     private string m_isIdleParamNameString;
 
@@ -34,4 +35,6 @@ public abstract class Power : MonoBehaviour
     {
 
     }
+
+    public abstract void ShowPower(bool show);
 }
