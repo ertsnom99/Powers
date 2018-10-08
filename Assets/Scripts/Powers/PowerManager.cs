@@ -7,6 +7,13 @@ public enum ArmSide
     Right
 }
 
+/*
+- Manage powers:
+- Manage the availabilitie of the powers
+- Allow to change to a specific power or switch to previous or next power
+- Act as an interface to start/stop charging currently selected power and to use currently selected power
+*/
+
 public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
 {
     [Header("Animation")]
@@ -36,7 +43,7 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
     private void Start()
     {
         ResetAnimator();
-        ResetAllPowers();
+        InitialiseAllPowers();
         SubscribeToEvents();
 
         if (NbrOfAvailablePowers > 0)
@@ -82,10 +89,11 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
         }
     }
 
-    private void ResetAllPowers()
+    private void InitialiseAllPowers()
     {
         for (int i = 0; i< m_powers.Length; i++)
         {
+            m_powers[i].SetArmsAnimator(m_armsAnimator);
             ShowPower(i, false);
         }
     }

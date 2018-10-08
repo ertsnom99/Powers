@@ -11,12 +11,19 @@ public abstract class Power : MonoBehaviour
 
     public int IsIdleParamHashId { get; private set; }
 
+    private Animator m_armsAnimator;
+
     protected virtual void Awake()
     {
         IsChargeable = true;
         IsCharging = false;
 
         IsIdleParamHashId = Animator.StringToHash(m_isIdleParamNameString);
+    }
+
+    public void SetArmsAnimator(Animator armsAnimator)
+    {
+        m_armsAnimator = armsAnimator;
     }
 
     public virtual void StartCharging()
