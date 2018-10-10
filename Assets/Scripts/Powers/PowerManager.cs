@@ -93,8 +93,7 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
     {
         for (int i = 0; i< m_powers.Length; i++)
         {
-            m_powers[i].SetArmsAnimator(m_armsAnimator);
-            ShowPower(i, false);
+            m_powers[i].Initialise(m_armsAnimator, m_armsEventsManager, false);
         }
     }
 
@@ -124,11 +123,19 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
         }
     }
 
-    public void SelectNextPower()
+    // Returns if the current power was changed
+    public bool SelectNextPower()
     {
-        m_indexChangeDelegateMethod = CalculateNextIndex;
+        int selectedPowerIndexBeforeChange = m_selectedPowerIndex;
 
-        ChangePower();
+        if (!m_powers[m_selectedPowerIndex].IsBusy)
+        {
+            m_indexChangeDelegateMethod = CalculateNextIndex;
+
+            ChangePower();
+        }
+
+        return selectedPowerIndexBeforeChange != m_selectedPowerIndex;
     }
 
     private int CalculateNextIndex()
@@ -136,11 +143,19 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
         return (m_selectedPowerIndex + 1) % m_powers.Length;
     }
 
-    public void SelectPreviousPower()
+    // Returns if the current power was changed
+    public bool SelectPreviousPower()
     {
-        m_indexChangeDelegateMethod = CalculatePreviousIndex;
+        int selectedPowerIndexBeforeChange = m_selectedPowerIndex;
 
-        ChangePower();
+        if (!m_powers[m_selectedPowerIndex].IsBusy)
+        {
+            m_indexChangeDelegateMethod = CalculatePreviousIndex;
+
+            ChangePower();
+        }
+
+        return selectedPowerIndexBeforeChange != m_selectedPowerIndex;
     }
 
     private int CalculatePreviousIndex()
@@ -154,7 +169,8 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
         // Only allow to change if there's more than one power available
         if (NbrOfAvailablePowers > 1)
         {
-            int lastIterationPower = m_previousPowerIndex = m_selectedPowerIndex;
+            int selectedPowerIndexBeforeChange = m_selectedPowerIndex;
+            int lastIterationPower = m_selectedPowerIndex;
 
             do
             {
@@ -164,6 +180,7 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
 
             if (m_selectedPowerIndex != lastIterationPower)
             {
+                m_previousPowerIndex = selectedPowerIndexBeforeChange;
                 ChangePowerAnimation(lastIterationPower, m_selectedPowerIndex);
             }
         }
@@ -177,35 +194,37 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
 
     private void ShowPower(int powerIndex, bool show)
     {
-        m_powers[powerIndex].ShowPower(show);
+        m_powers[powerIndex].Show(show);
     }
 
-    public bool IsSelectedPowerChargeable()
+    // Returns if the current power started charging
+    public bool StartChargingPower()
     {
-        return m_powers[m_selectedPowerIndex].IsChargeable;
+        bool chargeStarted = false;
+
+        if (m_powers[m_selectedPowerIndex].IsChargeable && !m_powers[m_selectedPowerIndex].IsCharging)
+        {
+            chargeStarted = m_powers[m_selectedPowerIndex].StartCharging();
+        }
+
+        return chargeStarted;
     }
 
-    public bool IsSelectedPowerCharging()
+    public bool StopChargingPower()
     {
-        return m_powers[m_selectedPowerIndex].IsCharging;
+        bool chargeEnded = false;
+
+        if (m_powers[m_selectedPowerIndex].IsChargeable && m_powers[m_selectedPowerIndex].IsCharging)
+        {
+            chargeEnded = m_powers[m_selectedPowerIndex].StopCharging();
+        }
+
+        return chargeEnded;
     }
 
-    public void StartChargingPower()
+    public bool UsePower()
     {
-        m_powers[m_selectedPowerIndex].StartCharging();
-        Debug.Log(Time.frameCount + " Charge");
-    }
-
-    public void StopChargingPower()
-    {
-        m_powers[m_selectedPowerIndex].StopCharging();
-        Debug.Log(Time.frameCount + " Stop");
-    }
-
-    public void UsePower()
-    {
-        m_powers[m_selectedPowerIndex].Use();
-        Debug.Log(Time.frameCount + " Use");
+        return m_powers[m_selectedPowerIndex].Use();
     }
 
     // Methods of the IAnimatorEventSubscriber interface

@@ -164,32 +164,30 @@ public class PlayerControls : MonoBehaviour
 
     private void UpdatePower(Inputs inputs)
     {
-        if (inputs.PreviousPower)
+        if (inputs.PreviousPower && m_powerManager.SelectPreviousPower())
         {
-            m_powerManager.SelectPreviousPower();
+            return;
         }
-        else if (inputs.NextPower)
+
+        if (inputs.NextPower && m_powerManager.SelectNextPower())
         {
-            m_powerManager.SelectNextPower();
+            return;
         }
-        else if (m_powerManager.IsSelectedPowerChargeable())
+
+        if (inputs.HoldLeftTrigger && m_powerManager.StartChargingPower())
         {
-            if (!m_powerManager.IsSelectedPowerCharging() && inputs.HoldLeftTrigger)
-            {
-                m_powerManager.StartChargingPower();
-            }
-            else if (inputs.LeftTriggerUp)
-            {
-                m_powerManager.StopChargingPower();
-                m_powerManager.UsePower();
-            }
+            return;
         }
-        else
+
+        if (inputs.LeftTriggerDown && m_powerManager.UsePower())
         {
-            if (inputs.LeftTriggerDown)
-            {
-                m_powerManager.UsePower();
-            }
+            return;
+        }
+
+        if (inputs.LeftTriggerUp && m_powerManager.StopChargingPower())
+        {
+            m_powerManager.UsePower();
+            return;
         }
     }
     

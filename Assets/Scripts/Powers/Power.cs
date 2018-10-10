@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 
-public abstract class Power : MonoBehaviour
+public abstract class Power : MonoBehaviour, IAnimatorEventSubscriber
 {
     public bool IsChargeable { get; protected set; }
     public bool IsCharging { get; protected set; }
+    public bool IsBusy { get; protected set; }
 
     [Header("Animation")]
     [SerializeField]
@@ -11,37 +12,48 @@ public abstract class Power : MonoBehaviour
 
     public int IsIdleParamHashId { get; private set; }
 
-    private Animator m_armsAnimator;
+    protected Animator m_armsAnimator;
+    protected ArmsEventsManager m_armsEventsManager;
 
     protected virtual void Awake()
     {
         IsChargeable = true;
         IsCharging = false;
+        IsBusy = false;
 
         IsIdleParamHashId = Animator.StringToHash(m_isIdleParamNameString);
     }
 
-    public void SetArmsAnimator(Animator armsAnimator)
+    public void Initialise(Animator armsAnimator, ArmsEventsManager armsEventsManager, bool show)
     {
         m_armsAnimator = armsAnimator;
+        m_armsEventsManager = armsEventsManager;
+        SubscribeToEvents();
+        Show(show);
     }
 
-    public virtual void StartCharging()
+    protected abstract void SubscribeToEvents();
+
+    public abstract void Show(bool show);
+
+    public virtual bool StartCharging()
     {
         IsCharging = true;
+        Debug.Log(Time.frameCount + " Charge");
 
+        return IsCharging;
     }
 
-    public virtual void StopCharging()
+    public virtual bool StopCharging()
     {
         IsCharging = false;
+        Debug.Log(Time.frameCount + " Stop");
 
+        return IsCharging == false;
     }
 
-    public virtual void Use()
-    {
+    public abstract bool Use();
 
-    }
-
-    public abstract void ShowPower(bool show);
+    // Methods of the IAnimatorEventSubscriber interface
+    public abstract void NotifyEvent(string eventName);
 }
