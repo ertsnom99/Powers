@@ -4,7 +4,7 @@ public abstract class Power : MonoBehaviour, IAnimatorEventSubscriber
 {
     public bool IsChargeable { get; protected set; }
     public bool IsCharging { get; protected set; }
-    public bool IsBusy { get; protected set; }
+    public bool CanBeStop { get; protected set; }
 
     [Header("Animation")]
     [SerializeField]
@@ -19,7 +19,7 @@ public abstract class Power : MonoBehaviour, IAnimatorEventSubscriber
     {
         IsChargeable = true;
         IsCharging = false;
-        IsBusy = false;
+        CanBeStop = true;
 
         IsIdleParamHashId = Animator.StringToHash(m_isIdleParamNameString);
     }

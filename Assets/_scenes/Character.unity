@@ -155,6 +155,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_isIdleParamNameString: IsHoldingTeleport
   m_teleportProjectile: {fileID: 1343770591}
+  m_throwRange: 20
+  m_detectionLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  m_throwForce: 20
+  m_characterCollider: {fileID: 340192453}
+  m_characterCamera: {fileID: 1449931230}
 --- !u!4 &122303787 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400060, guid: 0c21493f4095a6d4f869a1ff87ffff12,
@@ -427,7 +434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21b6aa1b93cc04f45bcbb2408ae1cd60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_useKeyboard: 1
+  m_useKeyboard: 0
 --- !u!4 &340192456
 Transform:
   m_ObjectHideFlags: 0
@@ -1118,6 +1125,7 @@ GameObject:
   - component: {fileID: 1343770595}
   - component: {fileID: 1343770594}
   - component: {fileID: 1343770593}
+  - component: {fileID: 1343770596}
   m_Layer: 0
   m_Name: Teleport Projectile (1)
   m_TagString: Untagged
@@ -1193,6 +1201,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1343770591}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &1343770596
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1343770591}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 1
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 1
 --- !u!1 &1384118364
 GameObject:
   m_ObjectHideFlags: 0

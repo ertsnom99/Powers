@@ -128,7 +128,7 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
     {
         int selectedPowerIndexBeforeChange = m_selectedPowerIndex;
 
-        if (!m_powers[m_selectedPowerIndex].IsBusy)
+        if (m_powers[m_selectedPowerIndex].CanBeStop)
         {
             m_indexChangeDelegateMethod = CalculateNextIndex;
 
@@ -148,7 +148,7 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
     {
         int selectedPowerIndexBeforeChange = m_selectedPowerIndex;
 
-        if (!m_powers[m_selectedPowerIndex].IsBusy)
+        if (m_powers[m_selectedPowerIndex].CanBeStop)
         {
             m_indexChangeDelegateMethod = CalculatePreviousIndex;
 
