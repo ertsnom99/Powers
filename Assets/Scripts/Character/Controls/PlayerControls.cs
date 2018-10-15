@@ -54,21 +54,21 @@ public class PlayerControls : MonoBehaviour
                 // Movement and camera update
                 if (!OnPreventMovementControlCheck())
                 {
-                    UpdateCamera(inputs, inputs.LockOn);
-                    UpdateMovement(inputs, inputs.LockOn);
+                    UpdateCamera(inputs, inputs.lockOn);
+                    UpdateMovement(inputs, inputs.lockOn);
                     UpdatePower(inputs);
                 }
                 else
                 {
-                    UpdateCamera(noControlInputs, noControlInputs.LockOn);
-                    UpdateMovement(noControlInputs, noControlInputs.LockOn);
+                    UpdateCamera(noControlInputs, noControlInputs.lockOn);
+                    UpdateMovement(noControlInputs, noControlInputs.lockOn);
                     UpdatePower(noControlInputs);
                 }
             }
             else
             {
-                UpdateCamera(noControlInputs, noControlInputs.LockOn);
-                UpdateMovement(noControlInputs, noControlInputs.LockOn);
+                UpdateCamera(noControlInputs, noControlInputs.lockOn);
+                UpdateMovement(noControlInputs, noControlInputs.lockOn);
                 UpdatePower(noControlInputs);
             }
         }
@@ -88,19 +88,21 @@ public class PlayerControls : MonoBehaviour
             inputs.xAxis = Input.GetAxis("Mouse X");
             inputs.yAxis = Input.GetAxis("Mouse Y");
 
-            inputs.LockOn = Input.GetButton("Lock");
+            inputs.lockOn = Input.GetButton("Lock");
 
-            inputs.PreviousPower = Input.GetKeyDown("z");
-            inputs.NextPower = Input.GetKeyDown("c");
+            inputs.previousPower = Input.GetKeyDown("z");
+            inputs.nextPower = Input.GetKeyDown("c");
 
-            inputs.LeftTriggerDown = Input.GetKeyDown("q");
-            inputs.RightTriggerDown = Input.GetKeyDown("e");
+            inputs.leftTriggerDown = Input.GetKeyDown("q");
+            inputs.rightTriggerDown = Input.GetKeyDown("e");
 
-            inputs.LeftTriggerUp = Input.GetKeyUp("q");
-            inputs.RightTriggerUp = Input.GetKeyUp("e");
+            inputs.leftTriggerUp = Input.GetKeyUp("q");
+            inputs.rightTriggerUp = Input.GetKeyUp("e");
 
-            inputs.HoldLeftTrigger = Input.GetKey("q");
-            inputs.HoldRightTrigger = Input.GetKey("e");
+            inputs.holdLeftTrigger = Input.GetKey("q");
+            inputs.holdRightTrigger = Input.GetKey("e");
+
+            inputs.cancelPower = Input.GetKey("x");
         }
 	    else
 	    {
@@ -112,19 +114,21 @@ public class PlayerControls : MonoBehaviour
             inputs.xAxis = Input.GetAxis("Right Stick X");
             inputs.yAxis = Input.GetAxis("Right Stick Y");
 
-            inputs.LockOn = Input.GetButton("Controller Lock");
+            inputs.lockOn = Input.GetButton("Controller Lock");
 
-            inputs.PreviousPower = Input.GetButtonDown("Left Bumper");
-            inputs.NextPower = Input.GetButtonDown("Right Bumper");
+            inputs.previousPower = Input.GetButtonDown("Left Bumper");
+            inputs.nextPower = Input.GetButtonDown("Right Bumper");
 
-            inputs.LeftTriggerDown = !m_wasLeftTriggerInputDown && Input.GetAxis("Left Trigger") == 1.0f;
-            inputs.RightTriggerDown = !m_wasRightTriggerInputDown && Input.GetAxis("Right Trigger") == 1.0f;
+            inputs.leftTriggerDown = !m_wasLeftTriggerInputDown && Input.GetAxis("Left Trigger") == 1.0f;
+            inputs.rightTriggerDown = !m_wasRightTriggerInputDown && Input.GetAxis("Right Trigger") == 1.0f;
             
-            inputs.LeftTriggerUp = m_wasLeftTriggerInputDown && Input.GetAxis("Left Trigger") != 1.0f;
-            inputs.RightTriggerUp = m_wasRightTriggerInputDown && Input.GetAxis("Right Trigger") != 1.0f;
+            inputs.leftTriggerUp = m_wasLeftTriggerInputDown && Input.GetAxis("Left Trigger") != 1.0f;
+            inputs.rightTriggerUp = m_wasRightTriggerInputDown && Input.GetAxis("Right Trigger") != 1.0f;
             
-            inputs.HoldLeftTrigger = m_wasLeftTriggerInputDown = Input.GetAxis("Left Trigger") == 1.0f;
-            inputs.HoldRightTrigger = m_wasRightTriggerInputDown = Input.GetAxis("Right Trigger") == 1.0f;
+            inputs.holdLeftTrigger = m_wasLeftTriggerInputDown = Input.GetAxis("Left Trigger") == 1.0f;
+            inputs.holdRightTrigger = m_wasRightTriggerInputDown = Input.GetAxis("Right Trigger") == 1.0f;
+
+            inputs.cancelPower = Input.GetButtonDown("Fire2");
         }
 
         return inputs;
@@ -164,29 +168,34 @@ public class PlayerControls : MonoBehaviour
 
     private void UpdatePower(Inputs inputs)
     {
-        if (inputs.PreviousPower && m_powerManager.SelectPreviousPower())
+        if (inputs.previousPower && m_powerManager.SelectPreviousPower())
         {
             return;
         }
 
-        if (inputs.NextPower && m_powerManager.SelectNextPower())
+        if (inputs.nextPower && m_powerManager.SelectNextPower())
         {
             return;
         }
 
-        if (inputs.HoldLeftTrigger && m_powerManager.StartChargingPower())
+        if (inputs.holdLeftTrigger && m_powerManager.StartChargingPower())
         {
             return;
         }
 
-        if (inputs.LeftTriggerDown && m_powerManager.UsePower())
+        if (inputs.leftTriggerDown && m_powerManager.UsePower())
         {
             return;
         }
 
-        if (inputs.LeftTriggerUp && m_powerManager.StopChargingPower())
+        if (inputs.leftTriggerUp && m_powerManager.StopChargingPower())
         {
             m_powerManager.UsePower();
+            return;
+        }
+
+        if (inputs.cancelPower && m_powerManager.CancelPower())
+        {
             return;
         }
     }

@@ -227,6 +227,11 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
         return m_powers[m_selectedPowerIndex].Use();
     }
 
+    public bool CancelPower()
+    {
+        return m_powers[m_selectedPowerIndex].Cancel();
+    }
+
     // Methods of the IAnimatorEventSubscriber interface
     public void NotifyEvent(string eventName)
     {

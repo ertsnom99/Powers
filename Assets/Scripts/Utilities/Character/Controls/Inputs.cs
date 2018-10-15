@@ -7,41 +7,19 @@
     public float xAxis;
     public float yAxis;
 
-    public bool LockOn;
+    public bool lockOn;
 
-    public bool PreviousPower;
-    public bool NextPower;
+    public bool previousPower;
+    public bool nextPower;
 
-    public bool LeftTriggerDown;
-    public bool RightTriggerDown;
+    public bool leftTriggerDown;
+    public bool rightTriggerDown;
 
-    public bool LeftTriggerUp;
-    public bool RightTriggerUp;
+    public bool leftTriggerUp;
+    public bool rightTriggerUp;
 
-    public bool HoldLeftTrigger;
-    public bool HoldRightTrigger;
-
-    /*public bool interact;
-    public bool interactHeldDown;
-
-    public bool skillPressed;
-    public bool skillHeldDown;
-    public bool skillRelease;
-
-    public bool leftStick;
-    public bool rightStick;
+    public bool holdLeftTrigger;
+    public bool holdRightTrigger;
     
-    public bool leftBumper;
-    public bool rightBumper;
-
-    public bool aPressed;
-    public bool bPressed;
-    public bool xPressed;
-    public bool yPressed;
-
-    public bool cancel;
-    public bool pause;
-
-    public bool start;
-    public bool back;*/
+    public bool cancelPower;
 }

@@ -10,7 +10,12 @@ public class TestPower : Power
     {
         return false;
     }
-    
+
+    public override bool Cancel()
+    {
+        return false;
+    }
+
     // Methods of the IAnimatorEventSubscriber interface used by the parent class
     public override void NotifyEvent(string eventName)
     {

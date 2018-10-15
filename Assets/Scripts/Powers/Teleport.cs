@@ -8,7 +8,15 @@ public class Teleport : Power
 
     [Header("Projectile")]
     [SerializeField]
-    private GameObject m_teleportProjectile;
+    private GameObject m_projectile;
+    [SerializeField]
+    private float m_projectileDrag = 1.0f;
+    [SerializeField]
+    private Transform m_projectileHoldContainer;
+    [SerializeField]
+    private Vector3 m_projectilePositionOffset = Vector3.zero;
+    [SerializeField]
+    private Vector3 m_projectileRotationOffset = Vector3.zero;
     [SerializeField]
     private float m_throwRange = 20.0f;
     [SerializeField]
@@ -23,7 +31,9 @@ public class Teleport : Power
 
     [Header("Character")]
     [SerializeField]
-    private Collider m_characterCollider;
+    private Transform m_character;
+    private CapsuleCollider m_characterCollider;
+    private Rigidbody m_characterRigidbody;
     [SerializeField]
     private Camera m_characterCamera;
 
@@ -31,12 +41,28 @@ public class Teleport : Power
     {
         base.Awake();
 
-        Physics.IgnoreCollision(m_characterCollider, m_teleportProjectile.GetComponent<SphereCollider>());
-
-        m_teleportProjectileRigidbody = m_teleportProjectile.GetComponent<Rigidbody>();
-        m_teleportProjectileRigidbody.isKinematic = true;
-
         IsChargeable = false;
+
+        m_characterCollider = m_character.GetComponent<CapsuleCollider>();
+        m_characterRigidbody = m_character.GetComponent<Rigidbody>();
+    }
+
+    public override void Initialise(Animator armsAnimator, ArmsEventsManager armsEventsManager, bool show)
+    {
+        base.Initialise(armsAnimator, armsEventsManager, show);
+
+        // Prevent the teleport sphere from colliding with the character SphereCollider
+        Physics.IgnoreCollision(m_characterCollider, m_projectile.GetComponent<SphereCollider>());
+
+        // Make sure that the teleport sphere has no rigidbody
+        Rigidbody teleportSphereRgidbody = m_projectile.GetComponent<Rigidbody>();
+
+        if (teleportSphereRgidbody)
+        {
+            Destroy(teleportSphereRgidbody);
+        }
+
+        ReplaceTeleportSphereInHand();
     }
 
     protected override void SubscribeToEvents()
@@ -46,7 +72,7 @@ public class Teleport : Power
 
     public override void Show(bool show)
     {
-        m_teleportProjectile.SetActive(show);
+        m_projectile.SetActive(show);
     }
 
     public override bool Use()
@@ -64,8 +90,22 @@ public class Teleport : Power
         // If the projectile was throwed
         else if (m_projectileThrowed)
         {
-            // TODO: Activate teleport
-            Debug.Log("Activate");
+            // TODO: Check if there is enough space
+            m_characterRigidbody.position = m_projectile.transform.position - m_characterCollider.center;
+            
+            RecoverTeleportProjectile();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public override bool Cancel()
+    {
+        if (m_startedThrowing && m_projectileThrowed)
+        {
+            RecoverTeleportProjectile();
 
             return true;
         }
@@ -75,8 +115,9 @@ public class Teleport : Power
 
     private void ThrowTeleportSphere()
     {
-        m_teleportProjectile.transform.SetParent(null);
-        m_teleportProjectileRigidbody.isKinematic = false;
+        m_projectile.transform.SetParent(null);
+
+        AddRigidbodyToTeleportSphere();
 
         RaycastHit hit;
         
@@ -91,6 +132,40 @@ public class Teleport : Power
         }
 
         m_projectileThrowed = true;
+    }
+
+    private void AddRigidbodyToTeleportSphere()
+    {
+        if (!m_teleportProjectileRigidbody)
+        {
+            m_teleportProjectileRigidbody = m_projectile.AddComponent<Rigidbody>();
+            m_teleportProjectileRigidbody.isKinematic = false;
+            m_teleportProjectileRigidbody.useGravity = true;
+            m_teleportProjectileRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+            m_teleportProjectileRigidbody.drag = m_projectileDrag;
+        }
+    }
+
+    private void RecoverTeleportProjectile()
+    {
+        // Destroy the rigidbody if it still exist
+        if (m_teleportProjectileRigidbody)
+        {
+            Destroy(m_teleportProjectileRigidbody);
+        }
+
+        ReplaceTeleportSphereInHand();
+
+        m_startedThrowing = false;
+        m_projectileThrowed = false;
+        CanBeStop = true;
+    }
+
+    private void ReplaceTeleportSphereInHand()
+    {
+        m_projectile.transform.SetParent(m_projectileHoldContainer);
+        m_projectile.transform.localPosition = m_projectilePositionOffset;
+        m_projectile.transform.rotation = Quaternion.Euler(m_projectileRotationOffset);
     }
 
     // Methods of the IAnimatorEventSubscriber interface used by the parent class

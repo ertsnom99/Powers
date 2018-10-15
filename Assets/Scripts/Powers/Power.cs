@@ -24,7 +24,7 @@ public abstract class Power : MonoBehaviour, IAnimatorEventSubscriber
         IsIdleParamHashId = Animator.StringToHash(m_isIdleParamNameString);
     }
 
-    public void Initialise(Animator armsAnimator, ArmsEventsManager armsEventsManager, bool show)
+    public virtual void Initialise(Animator armsAnimator, ArmsEventsManager armsEventsManager, bool show)
     {
         m_armsAnimator = armsAnimator;
         m_armsEventsManager = armsEventsManager;
@@ -53,6 +53,8 @@ public abstract class Power : MonoBehaviour, IAnimatorEventSubscriber
     }
 
     public abstract bool Use();
+
+    public abstract bool Cancel();
 
     // Methods of the IAnimatorEventSubscriber interface
     public abstract void NotifyEvent(string eventName);
