@@ -10,19 +10,23 @@ public class Teleport : Power
     [SerializeField]
     private GameObject m_projectile;
     [SerializeField]
+    private float m_projectileMass = 0.4f;
+    [SerializeField]
     private float m_projectileDrag = 1.0f;
+    [SerializeField]
+    private float m_throwRange = 20.0f;
+    [SerializeField]
+    private LayerMask m_throwDetectionLayer;
+    [SerializeField]
+    private float m_throwForce = 20.0f;
+
+    [Header("Projectile Container")]
     [SerializeField]
     private Transform m_projectileHoldContainer;
     [SerializeField]
     private Vector3 m_projectilePositionOffset = Vector3.zero;
     [SerializeField]
     private Vector3 m_projectileRotationOffset = Vector3.zero;
-    [SerializeField]
-    private float m_throwRange = 20.0f;
-    [SerializeField]
-    private LayerMask m_detectionLayer;
-    [SerializeField]
-    private float m_throwForce = 20.0f;
 
     private bool m_startedThrowing = false;
     private bool m_projectileThrowed = false;
@@ -121,7 +125,7 @@ public class Teleport : Power
 
         RaycastHit hit;
         
-        if (Physics.Raycast(m_characterCamera.transform.position, m_characterCamera.transform.forward, out hit, m_throwRange, m_detectionLayer))
+        if (Physics.Raycast(m_characterCamera.transform.position, m_characterCamera.transform.forward, out hit, m_throwRange, m_throwDetectionLayer))
         {
             m_teleportProjectileRigidbody.AddForce((hit.point - m_characterCamera.transform.position).normalized * m_throwForce, ForceMode.Impulse);
         }
@@ -142,6 +146,7 @@ public class Teleport : Power
             m_teleportProjectileRigidbody.isKinematic = false;
             m_teleportProjectileRigidbody.useGravity = true;
             m_teleportProjectileRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+            m_teleportProjectileRigidbody.mass = m_projectileMass;
             m_teleportProjectileRigidbody.drag = m_projectileDrag;
         }
     }
