@@ -8,4 +8,7 @@
 
     // Teleport power events
     public const string THROW_TELEPORT_SPHERE_EVENT = "ThrowTeleportSphere";
+
+    // Gravity pull power events
+    public const string THROW_GRAVITY_PULL_SPHERE_EVENT = "ThrowGravityPullSphere";
 }

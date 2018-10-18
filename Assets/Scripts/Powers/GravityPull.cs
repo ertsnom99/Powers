@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-public class Teleport : Power
+public class GravityPull : Power
 {
-    private const string m_throwTeleportParamNameString = "ThrowTeleport";
+    private const string m_throwGravityPullParamNameString = "ThrowGravityPull";
 
-    private int m_throwTeleportParamHashId = Animator.StringToHash(m_throwTeleportParamNameString);
+    private int m_throwGravityPullParamHashId = Animator.StringToHash(m_throwGravityPullParamNameString);
 
     [Header("Projectile")]
     [SerializeField]
@@ -36,8 +36,6 @@ public class Teleport : Power
     [Header("Character")]
     [SerializeField]
     private Transform m_character;
-    private CapsuleCollider m_characterCollider;
-    private Rigidbody m_characterRigidbody;
     [SerializeField]
     private Camera m_characterCamera;
 
@@ -46,9 +44,6 @@ public class Teleport : Power
         base.Awake();
 
         IsChargeable = false;
-
-        m_characterCollider = m_character.GetComponent<CapsuleCollider>();
-        m_characterRigidbody = m_character.GetComponent<Rigidbody>();
     }
 
     public override void Initialise(Animator armsAnimator, ArmsEventsManager armsEventsManager, bool show)
@@ -56,7 +51,7 @@ public class Teleport : Power
         base.Initialise(armsAnimator, armsEventsManager, show);
 
         // Prevent the projectile from colliding with the character SphereCollider
-        Physics.IgnoreCollision(m_characterCollider, m_projectile.GetComponent<SphereCollider>());
+        Physics.IgnoreCollision(m_character.GetComponent<CapsuleCollider>(), m_projectile.GetComponent<SphereCollider>());
 
         // Make sure that the projectile has no rigidbody
         Rigidbody projectileRgidbody = m_projectile.GetComponent<Rigidbody>();
@@ -68,10 +63,10 @@ public class Teleport : Power
 
         ReplaceProjectileInHand();
     }
-
+    
     protected override void SubscribeToEvents()
     {
-        m_armsEventsManager.Subscribe(ArmsEventsManager.THROW_TELEPORT_SPHERE_EVENT, this);
+        m_armsEventsManager.Subscribe(ArmsEventsManager.THROW_GRAVITY_PULL_SPHERE_EVENT, this);
     }
 
     public override void Show(bool show)
@@ -82,29 +77,29 @@ public class Teleport : Power
     public override bool Use()
     {
         // If the the projectile hasn't started being thrown
-        if(!m_startedThrowing)
+        if (!m_startedThrowing)
         {
             m_startedThrowing = true;
             CanBeStop = false;
 
-            m_armsAnimator.SetTrigger(m_throwTeleportParamHashId);
+            m_armsAnimator.SetTrigger(m_throwGravityPullParamHashId);
 
             return true;
         }
         // If the projectile was throwed
         else if (m_projectileThrowed)
         {
-            // TODO: Check if there is enough space
-            m_characterRigidbody.position = m_projectile.transform.position - m_characterCollider.center;
-            
-            RecoverProjectile();
+            // TODO: Activate gravity pull of sphere
+            /*m_characterRigidbody.position = m_projectile.transform.position - m_characterCollider.center;
+
+            RecoverProjectile();*/
 
             return true;
         }
 
         return false;
     }
-
+    
     public override bool Cancel()
     {
         if (m_startedThrowing && m_projectileThrowed)
@@ -116,7 +111,7 @@ public class Teleport : Power
 
         return false;
     }
-
+    
     private void ThrowProjectile()
     {
         m_projectile.transform.SetParent(null);
@@ -124,7 +119,7 @@ public class Teleport : Power
         AddRigidbodyToProjectile();
 
         RaycastHit hit;
-        
+
         if (Physics.Raycast(m_characterCamera.transform.position, m_characterCamera.transform.forward, out hit, m_throwRange, m_throwDetectionLayer))
         {
             m_projectileRigidbody.AddForce((hit.point - m_characterCamera.transform.position).normalized * m_throwForce, ForceMode.Impulse);
@@ -178,7 +173,7 @@ public class Teleport : Power
     {
         switch (eventName)
         {
-            case ArmsEventsManager.THROW_TELEPORT_SPHERE_EVENT:
+            case ArmsEventsManager.THROW_GRAVITY_PULL_SPHERE_EVENT:
                 ThrowProjectile();
                 break;
             default:
