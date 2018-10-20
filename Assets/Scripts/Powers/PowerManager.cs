@@ -7,6 +7,12 @@ public enum ArmSide
     Right
 }
 
+public enum SelectPowerOption
+{
+    Previous,
+    Next
+}
+
 /*
 - Manage powers:
 - Manage the availabilitie of the powers
@@ -28,7 +34,9 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
 
     private Dictionary<int, bool> m_powerAvailability;
     public int NbrOfAvailablePowers { get; private set; }
-    
+
+    private bool m_isChangingPower = false;
+
     private int m_previousPowerIndex;
     private int m_selectedPowerIndex;
 
@@ -124,16 +132,24 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
     }
 
     // Returns if the current power was changed
-    public bool SelectNextPower()
+    public bool SelectPower(SelectPowerOption selectOption)
     {
         int selectedPowerIndexBeforeChange = m_selectedPowerIndex;
-
-        if (m_powers[m_selectedPowerIndex].CanBeStop)
+        
+        switch(selectOption)
         {
-            m_indexChangeDelegateMethod = CalculateNextIndex;
-
-            ChangePower();
+            case SelectPowerOption.Previous:
+                m_indexChangeDelegateMethod = CalculatePreviousIndex;
+                break;
+            case SelectPowerOption.Next:
+                m_indexChangeDelegateMethod = CalculateNextIndex;
+                break;
+            default:
+                Debug.LogError("Unpredicted SelectPowerOption: " + selectOption);
+                break;
         }
+
+        ChangePower();
 
         return selectedPowerIndexBeforeChange != m_selectedPowerIndex;
     }
@@ -141,21 +157,6 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
     private int CalculateNextIndex()
     {
         return (m_selectedPowerIndex + 1) % m_powers.Length;
-    }
-
-    // Returns if the current power was changed
-    public bool SelectPreviousPower()
-    {
-        int selectedPowerIndexBeforeChange = m_selectedPowerIndex;
-
-        if (m_powers[m_selectedPowerIndex].CanBeStop)
-        {
-            m_indexChangeDelegateMethod = CalculatePreviousIndex;
-
-            ChangePower();
-        }
-
-        return selectedPowerIndexBeforeChange != m_selectedPowerIndex;
     }
 
     private int CalculatePreviousIndex()
@@ -166,8 +167,8 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
     // Used to go to next or previous power based on m_indexChangeDelegateMethod
     private void ChangePower()
     {
-        // Only allow to change if there's more than one power available
-        if (NbrOfAvailablePowers > 1)
+        // Only allow to change while no power is being changed at that moment and if there's more than one power available
+        if (!m_isChangingPower && m_powers[m_selectedPowerIndex].CanBeStop && NbrOfAvailablePowers > 1)
         {
             int selectedPowerIndexBeforeChange = m_selectedPowerIndex;
             int lastIterationPower = m_selectedPowerIndex;
@@ -180,6 +181,8 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
 
             if (m_selectedPowerIndex != lastIterationPower)
             {
+                m_isChangingPower = true;
+
                 m_previousPowerIndex = selectedPowerIndexBeforeChange;
                 ChangePowerAnimation(lastIterationPower, m_selectedPowerIndex);
             }
@@ -242,6 +245,7 @@ public class PowerManager : MonoBehaviour, IAnimatorEventSubscriber
                 break;
             case ArmsEventsManager.LEFT_ARM_SHOW_POWER_EVENT:
                 ShowPower(m_selectedPowerIndex, true);
+                m_isChangingPower = false;
                 break;
             case ArmsEventsManager.RIGHT_ARM_HIDE_POWER_EVENT:
 

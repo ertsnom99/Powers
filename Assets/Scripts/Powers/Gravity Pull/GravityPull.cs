@@ -19,6 +19,8 @@ public class GravityPull : Power
     private LayerMask m_throwDetectionLayer;
     [SerializeField]
     private float m_throwForce = 20.0f;
+    
+    private GravityField m_gravityField;
 
     [Header("Projectile Container")]
     [SerializeField]
@@ -30,6 +32,7 @@ public class GravityPull : Power
 
     private bool m_startedThrowing = false;
     private bool m_projectileThrowed = false;
+    private bool m_gravityEnabled = false;
 
     private Rigidbody m_projectileRigidbody;
 
@@ -44,6 +47,13 @@ public class GravityPull : Power
         base.Awake();
 
         IsChargeable = false;
+        
+        m_gravityField = m_projectile.GetComponent<GravityField>();
+
+        if (!m_gravityField)
+        {
+            Debug.LogError("The projectile doesn't have any GravityField script");
+        }
     }
 
     public override void Initialise(Animator armsAnimator, ArmsEventsManager armsEventsManager, bool show)
@@ -62,6 +72,8 @@ public class GravityPull : Power
         }
 
         ReplaceProjectileInHand();
+
+        m_gravityField.EnableGravity(false);
     }
     
     protected override void SubscribeToEvents()
@@ -86,13 +98,22 @@ public class GravityPull : Power
 
             return true;
         }
-        // If the projectile was throwed
-        else if (m_projectileThrowed)
+        // If the projectile was throwed but gravity isn't enable yet
+        else if (m_projectileThrowed && !m_gravityEnabled)
         {
-            // TODO: Activate gravity pull of sphere
-            /*m_characterRigidbody.position = m_projectile.transform.position - m_characterCollider.center;
+            m_gravityEnabled = true;
 
-            RecoverProjectile();*/
+            m_projectileRigidbody.useGravity = false;
+            m_projectileRigidbody.isKinematic = true;
+
+            m_gravityField.EnableGravity(true);
+
+            return true;
+        }
+        else if (m_gravityEnabled)
+        {
+            m_gravityField.Explode();
+            Cancel();
 
             return true;
         }
@@ -104,6 +125,9 @@ public class GravityPull : Power
     {
         if (m_startedThrowing && m_projectileThrowed)
         {
+            m_gravityField.EnableGravity(false);
+            m_gravityEnabled = false;
+
             RecoverProjectile();
 
             return true;

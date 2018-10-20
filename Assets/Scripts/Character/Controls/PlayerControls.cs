@@ -168,12 +168,12 @@ public class PlayerControls : MonoBehaviour
 
     private void UpdatePower(Inputs inputs)
     {
-        if (inputs.previousPower && m_powerManager.SelectPreviousPower())
+        if (inputs.previousPower && m_powerManager.SelectPower(SelectPowerOption.Previous))
         {
             return;
         }
 
-        if (inputs.nextPower && m_powerManager.SelectNextPower())
+        if (inputs.nextPower && m_powerManager.SelectPower(SelectPowerOption.Next))
         {
             return;
         }
